@@ -1,11 +1,11 @@
-package com.xbcai.java8demo.reflex;
+package com.xbcai.java8demo.reflex.demo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.xbcai.java8demo.reflex.anno.NameAnno;
+import com.xbcai.java8demo.reflex.mode.Student;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * 利用反射实现一个简单的通用序列化/反序列化
@@ -67,6 +67,13 @@ public class SimpleMapperDemo {
         }
     }
 
+    /**
+     * 根据字段类型，给字段赋以相应类型的值
+     * @param f 字段
+     * @param obj 对象
+     * @param value 值
+     * @throws Exception
+     */
     private static void setFieldValue(Field f,Object obj, String value) throws Exception{
         Class<?> type = f.getType();
         if(type==int.class){
@@ -99,14 +106,12 @@ public class SimpleMapperDemo {
         System.out.println(s);
         Student stu = (Student)SimpleMapperDemo.stringToObject(s);
         System.out.println(stu);
+        Class<? extends Student> aClass = student.getClass();
+        System.out.println("+++++++++++++++++++++++++++++++++++");
+        System.out.println(aClass.getDeclaredAnnotation(NameAnno.class));
+
+
     }
 }
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-class Student{
-    String name;
-    int age;
-    Double score;
-}
+
