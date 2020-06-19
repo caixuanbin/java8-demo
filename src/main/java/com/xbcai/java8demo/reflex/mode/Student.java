@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NameAnno("学生实体")
 public class Student{
     @NameAnno("名字")
-    String name;
+    private String name;
     @NameAnno("年龄")
-    int age;
+    private int age;
     @NameAnno("分数")
-    Double score;
+    private Double score;
 }

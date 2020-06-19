@@ -5,8 +5,7 @@ import com.xbcai.java8demo.reflex.enumeration.GlobalEnum;
 import com.xbcai.java8demo.reflex.mode.Student;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -161,7 +160,78 @@ public class ReflexTest {
         }
     }
 
+    /**
+     * 字段描述符
+     */
+    private static void testFiledDesc() throws Exception{
+        Field field = Student.class.getDeclaredField("name");
+        int mod = field.getModifiers();
+        //获取字段类型前的描述，这里是private
+        System.out.println(Modifier.toString(mod));
+        //判断字段描述是否public
+        System.out.println(Modifier.isPublic(mod));
+        //判断字段描述是否static
+        System.out.println(Modifier.isStatic(mod));
+        //判断字段描述是否final
+        System.out.println(Modifier.isFinal(mod));
+    }
+
+    /**
+     * 类的方法
+     */
+    private static void testMethod() throws Exception{
+        Student s = new Student("zhangsan",2,33.0);
+        Class<? extends Student> clazz = s.getClass();
+        //返回所有的public方法，包括其父类的，如果没有方法，返回空数组
+        Method[] methods = clazz.getMethods();
+        Arrays.asList(methods).forEach(System.out::println);
+        System.out.println("==============================================");
+        //返回本类声明的所有方法，包括非public的，但不包括父类的
+        Method[] declaredMethods = clazz.getDeclaredMethods();
+        Arrays.asList(declaredMethods).forEach(System.out::println);
+        System.out.println("==============================================");
+        //返回本类或父类中指定名称和参数类型的public方法，找不到就抛出异常
+        Method name = clazz.getMethod("setName",String.class);
+        System.out.println(name.getName());
+        //設置为true表示忽略Java的访问检查机制，以允许调用非public的方法
+        name.setAccessible(true);
+        System.out.println("===============================================");
+        //输出该字段的值
+        Field name1 = clazz.getDeclaredField("name");
+        //因为字段是private的，所以为了获取该字段的值，必须設置为true
+        name1.setAccessible(true);
+        System.out.println(name1.get(s));
+        System.out.println("===============================================");
+        //在指定对象s上调用Method代表的方法，传递参数
+        name.invoke(s,"xxxxxxxxxxxxxxxx");
+        //输出通过调用setName方法，传递参数来改变字段name的值
+        System.out.println(name1.get(s));
+    }
+
+    /**
+     * 构造方法
+     */
+    private static void testConstructor() throws Exception{
+        Class<Student> studentClass = Student.class;
+        //获取所有的public构造方法，返回值可能为长度为0的空数组
+        Constructor<?>[] constructors = studentClass.getConstructors();
+        Arrays.asList(constructors).forEach(System.out::println);
+        System.out.println("===================================================");
+        //获取所有的构造方法，包括非public的
+        Constructor<?>[] declaredConstructors = studentClass.getDeclaredConstructors();
+        Arrays.asList(declaredConstructors).forEach(System.out::println);
+        System.out.println("===================================================");
+        //获取指定参数类型的public构造方法，没有找到就抛出异常
+        Constructor<Student> constructor = studentClass.getConstructor(String.class, int.class, Double.class);
+        System.out.println(constructor);
+        System.out.println("===================================================");
+        //获取指定参数类型的构造方法,包括非public的，没有找到就抛出异常
+        Constructor<Student> declaredConstructor = studentClass.getDeclaredConstructor(String.class, int.class, Double.class);
+        System.out.println(declaredConstructor);
+
+    }
+
     public static void main(String[] args) throws Exception {
-        testField();
+        testConstructor();
     }
 }
