@@ -6,6 +6,7 @@ import com.xbcai.java8demo.reflex.mode.Student;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,6 +62,7 @@ public class ReflexTest {
      * 类的加载
      */
     private static void testLoadClass() throws Exception{
+        System.out.println(Student.class.getName());
         //基本类型不支持forName 方法
         Class<?> aClass = Class.forName(Student.class.getName());
         System.out.println(aClass);
@@ -228,10 +230,47 @@ public class ReflexTest {
         //获取指定参数类型的构造方法,包括非public的，没有找到就抛出异常
         Constructor<Student> declaredConstructor = studentClass.getDeclaredConstructor(String.class, int.class, Double.class);
         System.out.println(declaredConstructor);
+        System.out.println("===================================================");
+        //通过构造方法来创建一个对象
+        Constructor<Student> stu = Student.class.getConstructor(String.class, int.class, Double.class);
+        Student xbcai00 = stu.newInstance("xbcai00", 32, 88.88);
+        System.out.println(xbcai00);
+    }
+
+    /**
+     * 类型判断
+     */
+    private static void testClassType() throws Exception{
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        Class<?> aClass = Class.forName("java.util.ArrayList");
+        //动态判断对象类型 和 list instanceof ArrayList 是一样的效果，但instanceof 后面的类型是事先先确定的
+        if(aClass.isInstance(list)){
+            System.out.println("array list");
+        }
+        System.out.println(list.getClass());
+        //动态进行类型转换，和(ArrayList)list 效果一样
+        ArrayList arrayList = toType(list, ArrayList.class);
+        System.out.println(arrayList.getClass());
+        //表示list类型是否能够转换成ArrayList 类型
+        boolean assignableFrom = list.getClass().isAssignableFrom(ArrayList.class);
+        System.out.println(assignableFrom);
+
 
     }
 
+    /**
+     * 动态类型转换
+     * @param obj 需要转换类型的对象
+     * @param cls 要转换为目标的类型
+     * @param <T> 泛型 代表任何对象
+     * @return 返回转换好的类型的对象
+     */
+    private static <T> T toType(Object obj,Class<T> cls){
+        return cls.cast(obj);
+    }
+
     public static void main(String[] args) throws Exception {
-        testConstructor();
+        testLoadClass();
     }
 }

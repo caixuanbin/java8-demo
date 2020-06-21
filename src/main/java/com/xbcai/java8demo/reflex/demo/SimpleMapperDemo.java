@@ -94,7 +94,7 @@ public class SimpleMapperDemo {
             f.set(obj,value);
         }else{
             //假定该类型有一个以String类型为参数的构造方法
-            Constructor<?> ctor = type.getConstructor(new Class[]{String.class});
+            Constructor<?> ctor = type.getConstructor(String.class);
             f.set(obj,ctor.newInstance(value));
 
         }
