@@ -39,6 +39,7 @@ class ServiceB{
  * 有的话就获取该字段的类型，创建字段类型对应的对象，然后赋值给该字段，也就是依赖注入
  */
 class SimpleContainer{
+    @SuppressWarnings("all")
     public static <T> T getInstance(Class<T> cls) throws Exception{
         T obj = cls.newInstance();
         Field[] fields = cls.getDeclaredFields();
