@@ -64,7 +64,7 @@ public class LambdaUtils {
         List<Student> filter = filter(studentList, t -> t.getScore() > 50);
         System.out.println(filter);
         //测试容器转换方法,将学生列表转换为只有学生名字的列表返回
-        List<String> map = map(studentList, t -> t.getName());
+        List<String> map = map(studentList, Student::getName);
         //将学生列表名字转换为大写输出
         List<Student> map1 = map(studentList, t -> new Student(t.getName().toUpperCase(), t.getScore()));
         System.out.println(map);
