@@ -2,10 +2,7 @@ package com.xbcai.java8demo.lambda.test;
 
 import com.xbcai.java8demo.lambda.model.Student;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,8 +10,8 @@ import java.util.stream.Stream;
  * 流的测试用例
  */
 public class StreamTest {
-    private static Student[] stus = new Student[]{new Student("x",88),new Student("y",65),
-            new Student("z",99),new Student("w",99),new Student("a",100)};
+    private static Student[] stus = new Student[]{new Student("x",88,"一年级"),new Student("y",65,"一年级"),
+            new Student("z",99,"二年级"),new Student("z",102,"二年级"),new Student("a",100,"三年级 ")};
 
     /**
      * 返回列表中分数大于90分的学生列表
@@ -180,6 +177,48 @@ public class StreamTest {
       Stream.iterate(1,t->t+2).limit(100).forEach(System.out::println);
   }
 
+    /**
+     * 将学生列表转换为map集合，key是学生名字，value是学生实体
+     * 这里的key不能重复，如果有重复值会抛出异常
+     */
+  public static void testToMap(){
+      System.out.println("=======================================testToMap================================================");
+      Map<String, Student> collect = Arrays.asList(stus).stream().collect(Collectors.toMap(Student::getName, t -> t));
+      System.out.println(collect);
+  }
+
+    /**
+     * 将学生列表转换为map集合，key是学生名字，value是学生实体,如果有重复的key则用新的值赋值给该key对应的value
+     * 这里的key可以重复,如果需要合并相同的key对应的值，也可以按照实际情况去处理只需要改造(oldValue,value)->value 这个就行
+     * 对于hashMap是没有任何顺序的，如果希望保持元素原来出现的顺序，可以替换为linkedHashMap，如果希望收集的结果排序，可以使用treeMap
+     */
+  public static void testToMap2(){
+      System.out.println("=======================================testToMap2================================================");
+      Map<String, Student> collect = Arrays.asList(stus).stream().collect(Collectors.toMap(Student::getName, t -> t,(oldValue,value)->value));
+      //下面这个是保持元素原来的出现的顺序
+      LinkedHashMap<String, Student> collect1 = Arrays.asList(stus).stream().collect(Collectors.toMap(Student::getName, t -> t, (oldValue, value) -> value, LinkedHashMap::new));
+      System.out.println(collect);
+      System.out.println(collect1);
+  }
+
+    /**
+     * 将字符串连接起来用逗号分隔，并且在结果集加前缀和后缀
+     */
+  public static void testJoining(){
+      System.out.println("=======================================testJoining================================================");
+      String collect = Stream.of("acf", "laoma", "老是").collect(Collectors.joining(",", "{", "}"));
+      System.out.println(collect);
+  }
+
+    /**
+     * 将学生列表按年级分组，键是年级，值为学生列表
+     */
+  public static void testGroupingBy(){
+      System.out.println("=======================================testGroupingBy================================================");
+      Map<String, List<Student>> collect = Arrays.asList(stus).stream().collect(Collectors.groupingBy(Student::getGrade));
+      System.out.println(collect);
+  }
+
 
     public static void main(String[] args) {
         testBase();
@@ -199,5 +238,9 @@ public class StreamTest {
         testReduce();
         testGenerate();
         testIterate();
+        //testToMap();
+        testToMap2();
+        testJoining();
+        testGroupingBy();
     }
 }
