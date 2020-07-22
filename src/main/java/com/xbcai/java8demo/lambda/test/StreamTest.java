@@ -3,6 +3,7 @@ package com.xbcai.java8demo.lambda.test;
 import com.xbcai.java8demo.lambda.model.Student;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -219,6 +220,71 @@ public class StreamTest {
       System.out.println(collect);
   }
 
+    /**
+     * 将学生按年级分组，统计每个年级的学生个数
+     */
+  public static void testGroupingBy2(){
+      System.out.println("=======================================testGroupingBy2================================================");
+      Map<String, Long> collect = Arrays.asList(stus).stream().collect(Collectors.groupingBy(Student::getGrade, Collectors.counting()));
+      System.out.println(collect);
+  }
+
+    /**
+     * 统计一个单词流中每个单词的个数，按出现的顺序排序
+     */
+  public static void testGroupingBy3(){
+      System.out.println("=======================================testGroupingBy3================================================");
+      LinkedHashMap<String, Long> collect = Stream.of("hello", "world", "abc", "hello").collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()));
+      System.out.println(collect);
+  }
+
+    /**
+     * 获取每一个年级分数最高的一个学生
+     * 因为maxBy处理的流可能是空流，所以这个收集器收集的结果是Optional<Student>
+     */
+  public static void testGroupingBy4(){
+      System.out.println("=======================================testGroupingBy4================================================");
+      Map<String, Optional<Student>> collect = Arrays.asList(stus).stream().collect(Collectors.groupingBy(Student::getGrade, Collectors.maxBy(Comparator.comparing(Student::getScore))));
+      System.out.println(collect);
+  }
+
+    /**
+     * 获取每一个年级分数最高的一个学生
+     * 直接得到学生,前提是指定流不可能为空
+     */
+    public static void testGroupingBy5(){
+        System.out.println("=======================================testGroupingBy5================================================");
+        Map<String, Student> collect = Arrays.asList(stus).stream().collect(Collectors.groupingBy(Student::getGrade,Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(Student::getScore)),Optional::get)));
+        System.out.println(collect);
+    }
+
+    /**
+     * 按年级统计学生分数信息
+     * 这里的输出信息如下：包括个数、最大值、最小值、和、平均值
+     * {一年级=DoubleSummaryStatistics{count=2, sum=153.000000, min=65.000000, average=76.500000, max=88.000000},
+     * 二年级=DoubleSummaryStatistics{count=2, sum=201.000000, min=99.000000, average=100.500000, max=102.000000},
+     * 三年级 =DoubleSummaryStatistics{count=1, sum=100.000000, min=100.000000, average=100.000000, max=100.000000}}
+     */
+    public static void testGroupingBy6(){
+        System.out.println("=======================================testGroupingBy6================================================");
+        Map<String, DoubleSummaryStatistics> collect = Arrays.asList(stus).stream().collect(Collectors.groupingBy(Student::getGrade,
+                Collectors.summarizingDouble(Student::getScore)));
+        System.out.println(collect);
+    }
+
+    /**
+     * 对学生按年级分组，得到学生名称列表
+     * 应用场景：对每一个分组内的元素，我们感兴趣的可能不是元素本身，二十它的某部分信息，这个时候就可以使用mapping
+     * 这里的输出为 {一年级=[x, y], 二年级=[z, z], 三年级 =[a]}
+     */
+    public static void testGroupingByMapping(){
+        System.out.println("=======================================testGroupingByMapping================================================");
+        Map<String, List<String>> collect = Arrays.asList(stus).stream().collect(Collectors.groupingBy(Student::getGrade, Collectors.mapping(Student::getName, Collectors.toList())));
+        System.out.println(collect);
+    }
+
+
+
 
     public static void main(String[] args) {
         testBase();
@@ -242,5 +308,11 @@ public class StreamTest {
         testToMap2();
         testJoining();
         testGroupingBy();
+        testGroupingBy2();
+        testGroupingBy3();
+        testGroupingBy4();
+        testGroupingBy5();
+        testGroupingBy6();
+        testGroupingByMapping();
     }
 }
