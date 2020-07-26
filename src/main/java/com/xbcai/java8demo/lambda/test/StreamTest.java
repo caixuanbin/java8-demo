@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * 流的测试用例
  */
 public class StreamTest {
-    private static Student[] stus = new Student[]{new Student("x",88,"一年级"),new Student("y",65,"一年级"),
+    private static Student[] stus = new Student[]{new Student("x",88,"一年级"),new Student("y",55,"一年级"),
             new Student("z",99,"二年级"),new Student("z",102,"二年级"),new Student("a",100,"三年级 ")};
 
     /**
@@ -283,6 +283,33 @@ public class StreamTest {
         System.out.println(collect);
     }
 
+    /**
+     * 将学生按照是否及格分为两组
+     */
+    public static void testPartitioningBy(){
+        System.out.println("=======================================testPartitioningBy================================================");
+        Map<Boolean, List<Student>> collect = Arrays.asList(stus).stream().collect(Collectors.partitioningBy(t -> t.getScore() > 60));
+        System.out.println(collect);
+    }
+
+    /**
+     * 按是否及格分组后，计算每个分组的平均分
+     */
+    public static void testPartitioningByAndAveragingDouble(){
+        System.out.println("=======================================testPartitioningByAndAveragingDouble================================================");
+        Map<Boolean, Double> collect = Arrays.asList(stus).stream().collect(Collectors.partitioningBy(t -> t.getScore() >= 60, Collectors.averagingDouble(Student::getScore)));
+        System.out.println(collect);
+    }
+
+    /**
+     * 将学生按年级分组，分组后，再按照是否及格对学生进行分区
+     */
+    public static void testGroupingByAndPartioningBy(){
+        System.out.println("=======================================testGroupingByAndPartioningBy================================================");
+        Map<String, Map<Boolean, List<Student>>> collect = Arrays.asList(stus).stream().collect(Collectors.groupingBy(Student::getGrade, Collectors.partitioningBy(t -> t.getScore() >= 60)));
+        System.out.println(collect);
+    }
+
 
 
 
@@ -314,5 +341,8 @@ public class StreamTest {
         testGroupingBy5();
         testGroupingBy6();
         testGroupingByMapping();
+        testPartitioningBy();
+        testPartitioningByAndAveragingDouble();
+        testGroupingByAndPartioningBy();
     }
 }
